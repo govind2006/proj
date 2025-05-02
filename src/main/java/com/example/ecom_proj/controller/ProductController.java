@@ -15,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
@@ -42,9 +46,18 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product savedProduct = service.addProduct(product);
+    public ResponseEntity<?> addProduct(@RequestPart Product product,@RequestPart MultipartFile image) {
+        try{
+        Product savedProduct = service.addProduct(product,image);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage() ,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/products/{id}")
+    public void deleteProductById(@PathVariable int id) {
+        service.deleteProductById(id);
     }
 
 }
