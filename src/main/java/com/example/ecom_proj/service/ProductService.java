@@ -26,17 +26,29 @@ public class ProductService {
     }
 
     public Product addProduct(Product product, MultipartFile image) throws IOException {
-        // Assuming you have logic to handle the image file
-        // Save the image and set the path in the product object
-        // For now, just save the product without image handling
         product.setImageName(image.getOriginalFilename());
         product.setImageType(image.getContentType());
         product.setImageData(image.getBytes());
         return repo.save(product);
     }
 
+    public Product updateProduct(int id, Product product,MultipartFile image) throws IOException {
+        Product existingProduct = repo.findById(id).orElse(null);
+        if (existingProduct != null) {
+            product.setImageData(image.getBytes());
+            product.setImageName(image.getOriginalFilename());
+            product.setImageType(image.getContentType());
+            return repo.save(existingProduct);
+        }
+        return null;
+    }
+
     public void deleteProductById(int id) {
         repo.deleteById(id);
+    }
+
+    public List<Product> searchProducts(String keyword) {
+        return repo.searchProducts(keyword);
     }
     
 }
